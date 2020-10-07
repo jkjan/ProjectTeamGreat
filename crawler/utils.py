@@ -186,7 +186,12 @@ def get_song_info(song_id):
             release_date = ''.join(release_date)
             song_info['년도'] = release_date
             year = release_date[:4]
-            if not 2000 <= int(year) <= 2010:
+
+            # 발매일 확인
+            try:
+                if not 2000 <= int(year) <= 2010:
+                    return None
+            except ValueError:
                 return None
 
         elif dts[i].text == '장르':
