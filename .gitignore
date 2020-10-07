@@ -1,0 +1,6 @@
+# PyCharm 무시
+.idea/
+__pycache__/
+
+# linux 에서 swap file
+*.xlsx#
