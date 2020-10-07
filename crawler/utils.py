@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 import sys
 import os
 from pathlib import Path
+import urllib.request
+import urllib.parse
 
 
 def get_artists():
@@ -39,8 +41,10 @@ def get_artists():
 
     return artists
 
+
 # 아티스트 id 얻어오기
 def get_artist_id(artist):
+    artist = urllib.parse.quote_plus(artist)
     url = "https://www.melon.com/search/artist/index.htm?" \
           "q=" + artist + "&section=&searchGnbYn=Y&kkoSpl=Y&kkoDpType=&linkOrText=T&ipath=" \
           "srch_form#params%5Bq%5D=" + artist + "&params%5Bsq%5D=&params%5Bsort%5D=weight&params%5Bsection%5D=all&params%5Bsex%5D=&params%5BactType%5D=&params%5Bdomestic%5D=&params%5BgenreCd%5D=" \
@@ -54,30 +58,44 @@ def get_artist_id(artist):
     except IndexError:
         print(artist + "에 대하여 검색된 아티스트가 없습니다.")
 
+
 # url 에서 수프 가져오기
 def get_soup(url):
-    headers = {'User-Agent': 'Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57'}
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0'}
 
     try:
-        req = requests.get(url, headers=headers)
-        return BeautifulSoup(req.text, 'lxml')
+        req = urllib.request.Request(url, headers=headers)
+        f = urllib.request.urlopen(req)
+        html = f.read().decode('utf8')
+        return BeautifulSoup(html, 'html5lib')
     except requests.exceptions.ConnectionError as e:
         print("인터넷 연결을 확인하시길 바랍니다.")
         print(e)
         exit(0)
+
 
 # 아티스트 명에서 괄호 제거
 def delete_bracket(artist):
     artist = artist.split("(")
     return artist[0]
 
+
 # 곡 리스트 얻어오기
 def get_songs_list(id):
-    url = "https://www.melon.com/artist/song.htm?" \
-          "artistId=" + id
+    start_index = 1
+    while True:
+        print(start_index)
+        url = "https://www.melon.com/artist/song.htm?" \
+              "artistId=" + id + "#params%5BlistType%5D=A&params%5BorderBy%5D=ISSUE_DATE&params%5B" \
+              "artistId%5D=" + id + "&po=pageObj&startIndex=" + str(start_index)
 
-    soup = get_soup(url)
-    list_tags = soup.find_all('a', {'class': 'btn btn_icon_detail'})
-
-    for tag in list_tags:
-        print(tag)
+        print(url)
+        soup = get_soup(url)
+        list_tags = soup.find_all('a', {'class': 'btn btn_icon_detail'})
+        if len(list_tags) == 0:
+            break
+        for tag in list_tags:
+            song_id = tag.get('href').split("'")[-2]
+            title = tag.find("span").text
+            print(song_id, title)
+        start_index += 50
