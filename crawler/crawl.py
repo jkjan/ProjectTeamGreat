@@ -21,9 +21,10 @@ path = os.getcwd() + "/" + name + "/"
 
 artists = get_artists(path)
 recently_succeeded = 0
+total_info = []
 
 try:
-    current = open("recently_succeeded.txt", "rt")
+    current = open("crawler/recently_succeeded.txt", "rt")
     recently_succeeded = int(current.readline())
     print("최근", artists[recently_succeeded], "데이터까지 성공한 기록이 있습니다. 이어서 진행합니다.")
     recently_succeeded += 1
@@ -37,10 +38,11 @@ for i in range(recently_succeeded, len(artists)):
     if songs_info is None:
         continue
     try:
+        total_info += songs_info
         df = pd.DataFrame(songs_info, columns=columns)
         df.to_csv(path + "songs_" + name + "_" + artists[i] + ".csv", index=False, encoding='utf8')
         print(artists[i], "데이터를 저장하였습니다.")
-        current = open("recently_succeeded.txt", "wt")
+        current = open("crawler/recently_succeeded.txt", "wt")
         current.write(str(i))
         current.close()
 
@@ -50,3 +52,7 @@ for i in range(recently_succeeded, len(artists)):
 
     # next_start = datetime.datetime.now() + datetime.timedelta(minutes=15)
     # print("15분간 휴식합니다.", next_start.strftime("%H시 %M분"), "에 재개합니다.")
+
+df = pd.DataFrame(total_info, columns=columns)
+df.to_csv(path + "songs_" + name + "_total.csv", index=False, encoding='utf8')
+print("전체 데이터를 저장하였습니다.")
