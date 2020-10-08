@@ -4,3 +4,6 @@ __pycache__/
 
 # linux 에서 swap file
 *.xlsx#
+
+# csv 파일
+*.csv
