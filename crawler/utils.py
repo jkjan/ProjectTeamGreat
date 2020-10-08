@@ -171,7 +171,7 @@ def get_song_info(song_id):
           "songId=" + song_id
     soup = get_soup(url)
     song_info = {}
-    print(song_id)
+
     # 제목
     text = soup.select_one("div.song_name").get_text(separator='\n')
     song_title = get_text(text)[2:].strip().replace('\n', '')
