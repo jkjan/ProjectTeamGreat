@@ -3,6 +3,8 @@ import os
 from pathlib import Path
 from utils import *
 import pandas as pd
+import time
+import datetime
 
 columns = ['년도', '가수', '제목', '남녀', '장르',
            '최고순위', '작사가', '작곡가', '소속사', '가사']
@@ -20,11 +22,33 @@ path = str(Path(os.getcwd()).parent) + "/" + \
 
 artists = get_artists(path)
 total_info = []
+recently_succeeded = 0
 
-for artist in artists:
-    songs_info = get_songs_info(artist)
+try:
+    current = open("recently_succeeded.txt", "rt")
+    recently_succeeded = int(current.readline())
+    print("최근", artists[recently_succeeded], "데이터까지 성공한 기록이 있습니다. 이어서 진행합니다.")
+    recently_succeeded += 1
+    current.close()
+except FileNotFoundError:
+    pass
+
+for i in range(recently_succeeded, len(artists)):
+    songs_info = get_songs_info(artists[i])
+
     if songs_info is not None:
         total_info += songs_info
+    try:
+        df = pd.DataFrame(total_info, columns=columns)
+        df.to_csv(path + "songs_" + name + "_" + artists[i] + ".csv", index=False, encoding='utf8')
+        print(artists[i], "데이터를 저장하였습니다.")
+        current = open("recently_succeeded.txt", "wt")
+        current.write(str(i))
+        current.close()
 
-df = pd.DataFrame(total_info, columns=columns)
-df.to_csv(path + "songs_" + name + ".csv", index=False, encoding='utf8')
+    except Exception as e:
+        print(artists[i], "데이터를 저장하는 도중 예상치 못한 오류가 발생하였습니다.")
+        print(e)
+
+    # next_start = datetime.datetime.now() + datetime.timedelta(minutes=15)
+    # print("15분간 휴식합니다.", next_start.strftime("%H시 %M분"), "에 재개합니다.")
