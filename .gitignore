@@ -2,8 +2,5 @@
 .idea/
 __pycache__/
 
-# driver_path 충돌 방지
-crawler/driver_path.txt
-
 # linux 에서 swap file
 *.xlsx#

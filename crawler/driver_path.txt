@@ -1,1 +1,0 @@
-/home/jkjan/Desktop/GitHubRepos/BOJScrapper/chromedriver
