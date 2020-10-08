@@ -13,15 +13,13 @@ init()
 
 try:
     name = sys.argv[1]
-    print("인자가 전달되지 않았습니다.")
 except IndexError:
+    print("인자가 전달되지 않았습니다. 기본값(JKJ)으로 진행합니다.")
     name = "JKJ"
 
-path = str(Path(os.getcwd()).parent) + "/" + \
-       name + "/"
+path = os.getcwd() + "/" + name + "/"
 
 artists = get_artists(path)
-total_info = []
 recently_succeeded = 0
 
 try:
@@ -36,10 +34,10 @@ except FileNotFoundError:
 for i in range(recently_succeeded, len(artists)):
     songs_info = get_songs_info(artists[i])
 
-    if songs_info is not None:
-        total_info += songs_info
+    if songs_info is None:
+        continue
     try:
-        df = pd.DataFrame(total_info, columns=columns)
+        df = pd.DataFrame(songs_info, columns=columns)
         df.to_csv(path + "songs_" + name + "_" + artists[i] + ".csv", index=False, encoding='utf8')
         print(artists[i], "데이터를 저장하였습니다.")
         current = open("recently_succeeded.txt", "wt")

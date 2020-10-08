@@ -79,7 +79,7 @@ def delete_bracket(artist):
 # 드라이버 초기화
 def init():
     global webdriver
-    driver_path = open("driver_path.txt", "rt")
+    driver_path = open("crawler/driver_path.txt", "rt")
     webdriver = Chrome(driver_path.readline())
     webdriver.implicitly_wait(3)
 
