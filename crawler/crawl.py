@@ -38,6 +38,15 @@ for i in range(recently_succeeded, len(artists)):
     if songs_info is None:
         continue
     try:
+        # #debugLog1 2020-10-11T08:59 
+        #
+        # 에러가 한 번 발생 하여 recently_succeeded.txt를 이용하여 다시 시작 해야하는 경우 문제점 발생.
+        # 만약 서버단에서 블락이되어 프로그램이 종료된 경우 total_info가 증발하게 됌.
+        # 따라서 프로그램을 재개하게 되면 에러가 발생한 지점 이후의 songs_info들만 total_info에 저장이 됌.
+        # 다만 재개 한 경우에도 각 각의 songs_info들은 순서에 맞게 csv로 저장이 정상적으로 됌.
+        # 로직을 바꿔야 하지만 그렇게 되면 현재까지 크롤링한 데이터들을 다시 크롤링 해야함.
+        # 그렇기에 우선 현재 폴더에 csvMerger.py를 작성하여 각각의 데이터들을 합치는 코드들 작성해 두었음.
+        # 각 폴더의 songs_[name]_total.csv 파일들은 상기 코드로 우선 합쳐둔 것.
         total_info += songs_info
         df = pd.DataFrame(songs_info, columns=columns)
         df.to_csv(path + "songs_" + name + "_" + artists[i] + ".csv", index=False, encoding='utf8')
