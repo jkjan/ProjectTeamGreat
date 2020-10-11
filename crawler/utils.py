@@ -1,5 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
+import sys
+import os
+from pathlib import Path
 import urllib.request
 import urllib.parse
 from seleniumrequests import Chrome
@@ -14,7 +17,7 @@ def get_artists(path):
 
     to_find = None
     try:
-        to_find = open(path, "rt", encoding='utf8')
+        to_find = open(path, "rt")
     except FileNotFoundError:
         print("파일이 존재하지 않습니다:", path)
         exit(1)
@@ -41,10 +44,9 @@ def get_artist_id(artist):
     artist = urllib.parse.quote_plus(artist)
     url = "https://www.melon.com/search/artist/index.htm?" \
           "q=" + artist + "&section=&searchGnbYn=Y&kkoSpl=Y&kkoDpType=&linkOrText=T&ipath=" \
-          "srch_form#params%5Bq%5D=" + artist + \
-          "&params%5Bsq%5D=&params%5Bsort%5D=weight&params%5Bsection%5D=all&params%5Bsex%5D=&params%5BactType%5D=&params%5Bdomestic%5D=&params%5BgenreCd%5D=" \
-          "&params%5BactYear%5D=2000+2010+" \
-          "&po=pageObj&startIndex=1"
+                          "srch_form#params%5Bq%5D=" + artist + "&params%5Bsq%5D=&params%5Bsort%5D=weight&params%5Bsection%5D=all&params%5Bsex%5D=&params%5BactType%5D=&params%5Bdomestic%5D=&params%5BgenreCd%5D=" \
+                                                                "&params%5BactYear%5D=2000+2010+" \
+                                                                "&po=pageObj&startIndex=1"
 
     soup = get_soup(url)
     try:
@@ -73,7 +75,6 @@ def get_soup(url):
 def delete_bracket(artist):
     artist = artist.split("(")
     return artist[0]
-
 
 # 드라이버 초기화
 def init():
