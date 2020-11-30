@@ -15,13 +15,15 @@ except IndexError:
 
 path = os.getcwd() + "/" + name + "/"
 
-artists = get_artists(path)
+# artists = get_artists(path)
+artists = ["total_HSM", "total_KEH", "total_JKJ", "total_YJS"]
 total_info = []
 
 for x in range(len(artists)):
     tempList = []
     try:
-    	with open(os.path.join(name, 'songs_'+ name + '_' + artists[x] + '.csv'), 'r', encoding='utf8') as csvfile:
+        #with open(os.path.join(name, artists[x] + '.csv'), 'r', encoding='utf8') as csvfile:
+    	with open(os.path.join(name,  artists[x] + '.csv'), 'r') as csvfile:
     		rdr = csv.reader(csvfile)
     		i = 0
     		for row in rdr:
